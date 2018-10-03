@@ -117,12 +117,6 @@ def uloha5():
     pickle.dump(fruitAllPhotos, pickling_on)
     pickling_on.close()
 
-def uloha6():
-    print("TODO")
-
-
-def uloha7():
-    print("TODO")
 
 def printAllFileNames():
     files=os.listdir("./")
@@ -137,6 +131,15 @@ def checkPickleFilesLength():
             length=len(photos)
             print("Dlzka file: "+file+" je "+ str(length))
 
+def getLengthOfAllPickles():
+    files=os.listdir('./')
+    i=0
+    for file in files:
+        if ".pickle" in file:
+            i=i+1
+
+    return i
+
 def loadCertainNumberOfPhotosToPickleFiles(number):
     fruits = os.listdir('fruits-360/Training')
     for fruitName in fruits:
@@ -150,14 +153,86 @@ def loadCertainNumberOfPhotosToPickleFiles(number):
                 fruitPhotos.append(img)
             else:
                 break
+            i=i+1
         pickling_on = open(fruitName + ".pickle", "wb")
         pickle.dump(fruitPhotos, pickling_on)
         pickling_on.close()
 
+
+def loadAllPicklesToOne():
+    files = os.listdir("./")
+    fruitAllPhotos = [];
+    pickling_on = open("all/all.pickle", "wb")
+    for file in files:
+        if ".pickle" in file:
+            images=unpickleFile(file)
+            pickle.dump(images,pickling_on)
+            print(file)
+    pickling_on.close()
+    imagesforshuffle=unpickleFile('all/all.pickle')
+    random.shuffle(imagesforshuffle)
+    pickling_on = open("all/all.pickle", "wb")
+    pickle.dump(imagesforshuffle, pickling_on)
+    pickling_on.close()
+
+
+def loadAllPicklesToOneV2():
+    files = os.listdir("./")
+    fruitAllPhotos = [];
+    pickling_on = open("all/all.pickle", "wb")
+    for file in files:
+        if ".pickle" in file:
+            images = unpickleFile(file)
+            for img in images:
+                fruitAllPhotos.append(img)
+    random.shuffle(fruitAllPhotos)
+    pickle.dump(fruitAllPhotos, pickling_on)
+    pickling_on.close()
+
+def getLengthOfAllPickle():
+    allpickle=unpickleFile("all.pickle")
+    #print(allpickle)
+    print(len(allpickle))
+
+def getMeanAndStDeviatonOfArray(array):
+    return cv2.meanStdDev(array,mean=None,stddev=None,mask=None)
+
+def getStatisticalInformations():
+    files=os.listdir("./")
+    meanArray=[];
+    devArray=[];
+    for file in files:
+        if ".pickle" in file:
+            tmpMean = [];
+            tmpDev = [];
+            imgs=unpickleFile(file)
+            for img in imgs:
+                mean=getMeanAndStDeviatonOfArray(img)[0]
+                stdev=getMeanAndStDeviatonOfArray(img)[1]
+                tmpMean.append(np.mean(mean))
+                tmpDev.append(np.std(stdev))
+            meanArray.append(np.mean(tmpMean))
+            devArray.append(np.std(tmpDev))
+    print("Mean: "+str(np.mean(meanArray)))
+    print("Deviaton: "+ str(np.std(devArray)))
+
+def printImagesFromPickleAll():
+    images=unpickleFile('all/all.pickle')
+    for image in images:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        cv2.imshow("Bang", image)
+        cv2.waitKey(0)
+
+
 if __name__=="__main__":
-    printAllFileNames()
+    print("Rob cosi")
     #priemer min odcylka stdev
-
-
+    loadCertainNumberOfPhotosToPickleFiles(10)
+    checkPickleFilesLength()
+    #print(getLengthOfAllPickles())
+    loadAllPicklesToOneV2()
+    printImagesFromPickleAll()
+    #getLengthOfAllPickle()
+    #getStatisticalInformations()
 
 
